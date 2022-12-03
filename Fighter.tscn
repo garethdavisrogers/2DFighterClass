@@ -4,7 +4,7 @@
 [ext_resource path="res://Fighter.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 30, 45 )
+extents = Vector2( 15, 30 )
 
 [sub_resource type="RectangleShape2D" id=2]
 
