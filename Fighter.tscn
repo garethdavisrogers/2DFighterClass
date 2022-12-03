@@ -22,17 +22,18 @@ acceleration_coefficient = 1.05
 position = Vector2( -85, 0 )
 shape = SubResource( 1 )
 
+[node name="HitCol" type="Area2D" parent="."]
+position = Vector2( -85, 0 )
+
+[node name="HitCollider" type="CollisionShape2D" parent="HitCol"]
+shape = SubResource( 2 )
+disabled = true
+
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( -85, 0 )
 texture = ExtResource( 1 )
 hframes = 38
 frame = 8
-
-[node name="HitCol" type="Area2D" parent="Sprite"]
-
-[node name="HitCollider" type="CollisionShape2D" parent="Sprite/HitCol"]
-shape = SubResource( 2 )
-disabled = true
 
 [node name="blast_spawn" type="Position2D" parent="Sprite"]
 position = Vector2( 85, 0 )

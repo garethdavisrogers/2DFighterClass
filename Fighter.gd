@@ -3,11 +3,14 @@ extends KinematicBody2D
 onready var sprite = $Sprite
 
 export(float) var acceleration_coefficient = 5
+##the factor by which speed increases while moving
 export(int) var max_speed = 200
 export(int) var health = 1
 var BLAST = load('res://blast.tscn')
+##get projectile instance
 var movedir = Vector2(0, 0)
 var lastdirection = 1
+##determines the direction of the blast
 var state = 'idle'
 export(int) var speed = 1
 export(String) var type = 'enemy'
@@ -30,18 +33,23 @@ var input_damage = {'lite': 2, 'heavy': 3, 'finish': 5, 'blast': 2}
 var is_in_combo = false
 var current_attack_index = 1
 
+##main state changing function
 func state_machine(s):
 	if(state != s):
 		state = s
 
+##plays new animations or continues existing ones
 func anim_switch(new_anim):
 	if($anim.current_animation != new_anim):
 		$anim.play(new_anim)
+		
+##controls displacement
 func movement_loop():
 	var motion = movedir.normalized() * speed
 # warning-ignore:return_value_discarded
 	move_and_slide(motion, gravity)
 
+##matches the sprite fliph
 func spritedir_loop():
 	if(movedir.x > 0):
 		sprite.scale.x = sprite.scale.y * 1
@@ -50,6 +58,7 @@ func spritedir_loop():
 	else:
 		return
 
+##the overall attack state, returns to idle on timeout
 func state_attack(d):
 	if(is_in_combo):
 		combo_timer -= d

@@ -1020,20 +1020,6 @@ type = "player"
 [node name="Body Collider" parent="." index="0"]
 position = Vector2( -60, 0 )
 
-[node name="Sprite" parent="." index="1"]
-position = Vector2( -55, 0 )
-frame = 5
-
-[node name="HitCol" parent="Sprite" index="0" groups=[
-"player",
-]]
-
-[node name="HitCollider" parent="Sprite/HitCol" index="0"]
-position = Vector2( 30, -10 )
-
-[node name="blast_spawn" parent="Sprite" index="1"]
-position = Vector2( 40, -10 )
-
 [node name="anim" type="AnimationPlayer" parent="." index="2"]
 anims/blast = SubResource( 1 )
 anims/block = SubResource( 2 )
@@ -1055,7 +1041,11 @@ anims/walk = SubResource( 16 )
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
 current = true
 
-[node name="HitBox" parent="." index="4" groups=[
+[node name="Sprite" parent="." index="4"]
+position = Vector2( -55, 0 )
+frame = 5
+
+[node name="HitBox" parent="." index="5" groups=[
 "player",
 ]]
 

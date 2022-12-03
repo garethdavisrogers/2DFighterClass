@@ -285,20 +285,10 @@ radius = 700.0
 script = ExtResource( 3 )
 speed = 50
 
-[node name="Sprite" parent="." index="1"]
+[node name="Sprite" parent="." index="2"]
 texture = ExtResource( 2 )
 hframes = 15
 frame = 0
-
-[node name="HitCol" parent="Sprite" index="0" groups=[
-"enemy",
-]]
-
-[node name="HitCollider" parent="Sprite/HitCol" index="0"]
-position = Vector2( 60, 20 )
-
-[node name="CollisionShape2D" parent="HitBox" index="0"]
-position = Vector2( -80, 0 )
 
 [node name="anim" type="AnimationPlayer" parent="." index="3"]
 anims/idle = SubResource( 1 )
@@ -312,3 +302,8 @@ anims/walk = SubResource( 5 )
 [node name="DetectRadius" type="CollisionShape2D" parent="Detector" index="0"]
 position = Vector2( -85, 0 )
 shape = SubResource( 6 )
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+position = Vector2( -80, 0 )
+[connection signal="body_entered" from="Detector" to="." method="_on_Detector_body_entered"]
+[connection signal="body_exited" from="Detector" to="." method="_on_Detector_body_exited"]

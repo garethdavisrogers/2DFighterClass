@@ -2,20 +2,20 @@ extends "res://Fighter.gd"
 
 var attack_range = 100
 var target_position = null
+##Vector2 of player coordinates
 var player_detected = false
+##player_detected is based on enter/exit $Detector signals
 
 func _physics_process(delta):
+	##enemy can only function if not staggered
 	if(stun_timer < 0):
-		if(not player_detected):
-			get_player_position()
+		if(player_detected):
+			state_machine('seek')
 		if(movedir.x != 0 or movedir.y != 0):
 			anim_switch('walk')
-		target_position = get_player_position()
-		if(target_position != null):
-			state_machine('seek')
 		match state:
 			'seek':
-				state_seek(target_position)
+				state_seek()
 			'idle':
 				state_idle()
 			'attack':
@@ -27,7 +27,8 @@ func _physics_process(delta):
 	else:
 		stun_timer -= delta
 	
-func state_seek(t):
+func state_seek():
+	var t = get_player_position()
 	movement_loop()
 	spritedir_loop()
 	var s = self.get_position()
@@ -54,5 +55,18 @@ func state_seek(t):
 func get_player_position():
 	var bodies = $Detector.get_overlapping_bodies()
 	for body in bodies:
-		if(body.is_in_group('players')):
+		if(body.type == 'player'):
 			return body.position
+
+func _on_Detector_body_entered(body):
+	if(body.type == 'player'):
+		player_detected = true
+		state_machine('seek')
+
+
+func _on_Detector_body_exited(_body):
+	var bodies = $Detector.get_overlapping_bodies()
+	for b in bodies:
+		if(b.type == 'player'):
+			return
+	state_machine('idle')
