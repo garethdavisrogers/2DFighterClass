@@ -42,4 +42,3 @@ position = Vector2( 85, 0 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
 position = Vector2( -90, 0 )
 shape = SubResource( 3 )
-[connection signal="area_entered" from="HitBox" to="." method="_on_HitBox_area_entered"]

@@ -2,9 +2,12 @@ extends "res://Fighter.gd"
 
 var attack_range = 100
 var target_position = null
+var player_detected = false
 
 func _physics_process(delta):
 	if(stun_timer < 0):
+		if(not player_detected):
+			get_player_position()
 		if(movedir.x != 0 or movedir.y != 0):
 			anim_switch('walk')
 		target_position = get_player_position()
@@ -23,10 +26,6 @@ func _physics_process(delta):
 			cool_down -= delta
 	else:
 		stun_timer -= delta
-		
-func _on_Detector_body_entered(body):
-	if(body.is_in_group('players')):
-		state_machine('seek')
 	
 func state_seek(t):
 	movement_loop()

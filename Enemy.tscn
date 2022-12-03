@@ -308,9 +308,7 @@ anims/stagger = SubResource( 4 )
 anims/walk = SubResource( 5 )
 
 [node name="Detector" type="Area2D" parent="." index="4"]
-visible = false
 
 [node name="DetectRadius" type="CollisionShape2D" parent="Detector" index="0"]
 position = Vector2( -85, 0 )
 shape = SubResource( 6 )
-[connection signal="body_entered" from="Detector" to="." method="_on_Detector_body_entered"]

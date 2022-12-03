@@ -129,12 +129,3 @@ func state_stagger():
 		anim_switch('stagger')
 	else:
 		state_machine('idle')
-
-func _on_HitBox_area_entered(area):
-	var area_type = area.get_groups()
-	if(len(area_type) == 0 or area.type == self.type):
-		return
-	else:
-		for t in area_type:
-			if(t == type):
-				return

@@ -1055,5 +1055,9 @@ anims/walk = SubResource( 16 )
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
 current = true
 
+[node name="HitBox" parent="." index="4" groups=[
+"player",
+]]
+
 [node name="CollisionShape2D" parent="HitBox" index="0"]
 position = Vector2( -60, 0 )
