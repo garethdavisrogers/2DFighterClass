@@ -5,6 +5,7 @@ onready var sprite = $Sprite
 ##the factor by which speed increases while moving
 export(int) var max_speed = 200
 export(int) var health = 1
+export(int) var max_combo_index = 1
 var BLAST = load('res://blast.tscn')
 ##get projectile instance
 var movedir = Vector2(0, 0)
@@ -39,9 +40,11 @@ func anim_switch(new_anim):
 		
 ##controls displacement
 func movement_loop():
-	var motion = movedir.normalized() * speed
+	var motion
 	if(movedir == Vector2(0, 0) and (speed > 0)):
 		motion = Vector2((lastdirection * speed), 0)
+	else:
+		motion = movedir.normalized() * speed
 # warning-ignore:return_value_discarded
 	move_and_slide(motion, gravity)
 
@@ -54,30 +57,30 @@ func spritedir_loop():
 		sprite.scale.x = sprite.scale.y * -1
 		lastdirection = -1
 
-func state_idle(d):
+func state_idle():
 	combo_timer = 0
-	movement_loop()
 	if(movedir != Vector2(0,0)):
 		if(speed == 0):
-			speed = 1
+			speed += 1
 		else:
-			speed = lerp(speed, max_speed, d)
-		if(speed > 200):
-			anim_switch('run')
-		else:
-			anim_switch('walk')
+			speed = helpers.accelerate(speed, max_speed)
+			if(speed > 200):
+				anim_switch('run')
+			else:
+				anim_switch('walk')
 	else:
-		speed = lerp(speed, 0, d)
+		speed = helpers.decelerate(speed)
 		anim_switch('idle')
 		
 ##the overall attack state, returns to idle on timeout
 func state_attack(d):
+	speed = helpers.decelerate(speed)
 	if(is_in_combo):
 		combo_timer -= d
 	
 		if(combo_timer < 0):
-			combo_timer = time_till_next_input
 			is_in_combo = false
+			combo_timer = time_till_next_input
 			current_attack_index = 1
 			state_machine('idle')
 
@@ -109,21 +112,22 @@ func state_land(d):
 
 func state_fly():
 	movement_loop()
-		
-func reset_combo_timer(a):
-	if(current_attack_index < 5 or $anim.current_animation != 'heavy_attack3'):
-		combo_timer = time_till_next_input
-		cool_down = 0.5
-	else:
-		cool_down = 0.8
-		combo_timer = cool_down
 
 func damage_loop(damage):
 	health -= damage
 	stun_timer = 5
-	
-func state_stagger():
-	if(stun_timer > 0):
-		anim_switch('stagger')
+
+func attack_input_pressed():
+	is_in_combo = true
+	current_attack_index = min(current_attack_index + 1, max_combo_index)
+	state_machine('attack')
+	reset_combo_timer()
+
+func reset_combo_timer():
+	if(current_attack_index < max_combo_index or $anim.current_animation != 'heavy_attack3'):
+		cool_down = 0.5
+		combo_timer = time_till_next_input
 	else:
-		state_machine('idle')
+		cool_down = 2
+		combo_timer = 1
+	

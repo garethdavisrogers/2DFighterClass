@@ -9,6 +9,8 @@
 
 [node name="Player" parent="YSort" instance=ExtResource( 1 )]
 position = Vector2( 199.859, 235.433 )
+max_combo_index = 1
 
 [node name="Enemy" parent="YSort" instance=ExtResource( 2 )]
 position = Vector2( 745.316, 250.036 )
+max_combo_index = 1

@@ -16,10 +16,9 @@ func _physics_process(delta):
 			'fly':
 				state_fly()
 			'idle':
-				state_idle(delta)
-			'stagger':
-				state_stagger()
+				state_idle()
 		controls_loop()
+		movement_loop()
 		spritedir_loop()
 		if(cool_down > -1):
 			cool_down -= delta
@@ -40,20 +39,20 @@ func controls_loop():
 	if(cool_down < 0 and state != 'defense'):
 		if(Input.is_action_just_pressed('lite_attack')):
 			anim_switch(str('lite_attack', current_attack_index))
-			attack_input_pressed('lite')
+			attack_input_pressed()
 			
 		elif(Input.is_action_just_pressed("heavy_attack")):
 			if(current_attack_index > 3):
 				anim_switch(str('heavy_attack', 3))
 			else:
 				anim_switch(str('heavy_attack', current_attack_index))
-			attack_input_pressed('heavy')
+			attack_input_pressed()
 			
 		elif(Input.is_action_just_pressed("blast")):
 			if(state == 'idle' or state == 'attack'):
 				anim_switch('blast')
 				blast()
-				attack_input_pressed('blast')
+				attack_input_pressed()
 		elif(Input.is_action_pressed('defend')):
 			anim_switch('block')
 			
@@ -70,8 +69,3 @@ func controls_loop():
 				anim_switch('fly')
 				state_machine('fly')
 				
-func attack_input_pressed(a):
-	current_attack_index += 1
-	is_in_combo = true
-	state_machine('attack')
-	reset_combo_timer(a)

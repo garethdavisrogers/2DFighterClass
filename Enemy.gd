@@ -9,27 +9,31 @@ onready var in_range_collider = $Sprite/InRangeCollider
 
 func _physics_process(delta):
 	##enemy can only function if not staggered
-	if(stun_timer > 0 or cool_down > 0):
-		stun_timer -= delta
-		cool_down -= delta
-	if(in_melee_attack_range):
-		state_machine('attack')
-	elif(player_detected):
-		state_machine('seek')
+	if(stun_timer < 0):
+		if(player_detected and in_melee_attack_range):
+			if(cool_down < 0):
+				anim_switch(str('lite_attack', current_attack_index))
+				attack_input_pressed()
+		elif(player_detected):
+			state_machine('seek')
+		else:
+			state_machine('idle')
+			in_melee_attack_range = false
+			player_detected = false
+			
+		match state:
+			'attack':
+				state_attack(delta)
+			'seek':
+				state_seek()
+			'idle':
+				state_idle()
+		movement_loop()
+		spritedir_loop()
+		if(cool_down > -1):
+			cool_down -= delta
 	else:
-		movedir = Vector2(0, 0)
-		state_machine('idle')
-		
-	match state:
-		'attack':
-			state_attack('lite')
-		'stagger':
-			state_stagger()
-		'seek':
-			state_seek()
-		'idle':
-			state_idle(delta)
-		
+		stun_timer -= delta
 func state_seek():
 	var t = get_player_position()
 	##if no player is in detect radius, change to idle state
@@ -40,20 +44,15 @@ func state_seek():
 	
 func get_player_position():
 	var players = get_tree().get_nodes_in_group('players')
-	var player_position = players[0].get_position()
+	var player_position = players[0].global_position
 	return player_position
 
 func close_distance(player_pos):
-	var s = sprite.get_position()
-	if(player_pos.x > s.x):
-		movedir.x = 1
+	movedir = get_position().direction_to(player_pos)
+	if(speed == 0):
+			speed += 1
 	else:
-		movedir.x = -1
-	if(player_pos.y > s.y):
-		movedir.y = 1
-	else:
-		movedir.y = -1
-	movement_loop()
+		speed = helpers.accelerate(speed, max_speed)
 	spritedir_loop()
 	anim_switch('walk')
 	
@@ -78,7 +77,6 @@ func _on_InRangeCollider_body_entered(body):
 func _on_InRangeCollider_body_exited(body):
 	var bodies = in_range_collider.get_overlapping_bodies()
 	for b in bodies:
-		if(b.is_in_group('players')):
+		if(b != body and b.is_in_group('players')):
 			return
 	in_melee_attack_range = false
-	state_machine('seek')

@@ -17,6 +17,7 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
 }
+max_combo_index = 4
 
 [node name="Body Collider" type="CollisionShape2D" parent="."]
 position = Vector2( -85, 0 )
