@@ -286,7 +286,7 @@ script = ExtResource( 3 )
 [node name="Sprite" parent="." index="1"]
 texture = ExtResource( 2 )
 hframes = 15
-frame = 6
+frame = 7
 
 [node name="HitCollider" parent="Sprite/HitCol" index="0"]
 position = Vector2( 60, 20 )
