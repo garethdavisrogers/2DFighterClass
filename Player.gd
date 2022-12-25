@@ -2,14 +2,13 @@ extends "res://Fighter.gd"
 
 func _ready():
 	combo_timer = time_till_next_input
+	lastdirection = 1
 	
 func _physics_process(delta):
 	if(stun_timer < 0):
 		match state:
 			'attack':
 				state_attack(delta)
-			'defend':
-				state_defend()
 			'jump':
 				state_jump(delta)
 			'land':
@@ -17,7 +16,7 @@ func _physics_process(delta):
 			'fly':
 				state_fly()
 			'idle':
-				state_idle()
+				state_idle(delta)
 			'stagger':
 				state_stagger()
 		controls_loop()
@@ -57,7 +56,6 @@ func controls_loop():
 				attack_input_pressed('blast')
 		elif(Input.is_action_pressed('defend')):
 			anim_switch('block')
-			state_machine('defend')
 			
 		elif(Input.is_action_just_released('defend')):
 			state_machine('idle')

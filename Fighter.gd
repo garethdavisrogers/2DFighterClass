@@ -2,18 +2,16 @@ extends KinematicBody2D
 
 onready var sprite = $Sprite
 
-export(float) var acceleration_coefficient = 5
 ##the factor by which speed increases while moving
 export(int) var max_speed = 200
 export(int) var health = 1
 var BLAST = load('res://blast.tscn')
 ##get projectile instance
 var movedir = Vector2(0, 0)
-var lastdirection = 1
+var lastdirection = -1
 ##determines the direction of the blast
 var state = 'idle'
-export(int) var speed = 1
-export(String) var type = 'enemy'
+var speed = 0
 var cool_down = -1
 var defense = 0
 var gravity = Vector2(0, 0)
@@ -22,14 +20,10 @@ var jump_time = 0.5
 
 var stun_timer = -1
 ## limits stagger
-var inflicting_damage = 0
-## is the damage coming from the player's attack
 
 var combo_timer = 0
 var time_till_next_input = 0.5
 
-var input_cooldowns = {'lite': 0.2, 'heavy': 0.25, 'finish': 1, 'blast': 0.8}
-var input_damage = {'lite': 2, 'heavy': 3, 'finish': 5, 'blast': 2}
 var is_in_combo = false
 var current_attack_index = 1
 
@@ -46,6 +40,8 @@ func anim_switch(new_anim):
 ##controls displacement
 func movement_loop():
 	var motion = movedir.normalized() * speed
+	if(movedir == Vector2(0, 0) and (speed > 0)):
+		motion = Vector2((lastdirection * speed), 0)
 # warning-ignore:return_value_discarded
 	move_and_slide(motion, gravity)
 
@@ -53,11 +49,27 @@ func movement_loop():
 func spritedir_loop():
 	if(movedir.x > 0):
 		sprite.scale.x = sprite.scale.y * 1
+		lastdirection = 1
 	elif(movedir.x < 0):
 		sprite.scale.x = sprite.scale.y * -1
-	else:
-		return
+		lastdirection = -1
 
+func state_idle(d):
+	combo_timer = 0
+	movement_loop()
+	if(movedir != Vector2(0,0)):
+		if(speed == 0):
+			speed = 1
+		else:
+			speed = lerp(speed, max_speed, d)
+		if(speed > 200):
+			anim_switch('run')
+		else:
+			anim_switch('walk')
+	else:
+		speed = lerp(speed, 0, d)
+		anim_switch('idle')
+		
 ##the overall attack state, returns to idle on timeout
 func state_attack(d):
 	if(is_in_combo):
@@ -69,20 +81,14 @@ func state_attack(d):
 			current_attack_index = 1
 			state_machine('idle')
 
-func state_defend():
-	speed = 80
-
 func blast():
 	var blast = BLAST.instance(1)
 	var level = get_owner()
 	level.add_child(blast)
-	blast.type = self.type
+	blast.add_to_group('player')
 	var spawn_pos = $Sprite/blast_spawn.get_global_position()
 	blast.set_position(spawn_pos)
-	if(lastdirection == 1):
-		blast.blastdir = 1
-	else:
-		blast.blastdir = -1
+	blast.blastdir = lastdirection
 		
 func state_jump(d):
 	movement_loop()
@@ -103,30 +109,13 @@ func state_land(d):
 
 func state_fly():
 	movement_loop()
-	
-func state_idle():
-	inflicting_damage = input_damage['lite']
-	combo_timer = 0
-	movement_loop()
-	if(movedir != Vector2(0,0)):
-		speed = min((speed * acceleration_coefficient), max_speed)
-		if(speed > 150):
-			anim_switch('run')
-		else:
-			anim_switch('walk')
-	else:
-		speed = max((speed * 0.9) - 1, 1)
-		anim_switch('idle')
 		
 func reset_combo_timer(a):
 	if(current_attack_index < 5 or $anim.current_animation != 'heavy_attack3'):
-		if(a == 'heavy'):
-			inflicting_damage = input_damage['heavy']
 		combo_timer = time_till_next_input
-		cool_down = input_cooldowns[a]
+		cool_down = 0.5
 	else:
-		cool_down = input_cooldowns['finish']
-		inflicting_damage = input_damage['finish']
+		cool_down = 0.8
 		combo_timer = cool_down
 
 func damage_loop(damage):

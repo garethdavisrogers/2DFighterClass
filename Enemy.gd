@@ -3,16 +3,23 @@ extends "res://Fighter.gd"
 var in_melee_attack_range = false
 var target_position = null
 var player_detected = false
+onready var detector = $Detector
+onready var in_range_collider = $Sprite/InRangeCollider
 ##player_detected is based on enter/exit $Detector signals
 
 func _physics_process(delta):
 	##enemy can only function if not staggered
-	if(stun_timer > 0):
+	if(stun_timer > 0 or cool_down > 0):
 		stun_timer -= delta
-	if(player_detected == false):
-		state_machine('idle')
-	else:
+		cool_down -= delta
+	if(in_melee_attack_range):
+		state_machine('attack')
+	elif(player_detected):
 		state_machine('seek')
+	else:
+		movedir = Vector2(0, 0)
+		state_machine('idle')
+		
 	match state:
 		'attack':
 			state_attack('lite')
@@ -21,41 +28,23 @@ func _physics_process(delta):
 		'seek':
 			state_seek()
 		'idle':
-			state_idle()
-	if(cool_down > 0):
-		cool_down -= delta
+			state_idle(delta)
 		
 func state_seek():
 	var t = get_player_position()
 	##if no player is in detect radius, change to idle state
 	if(t != null):
-		in_melee_attack_range = get_is_in_melee_range(t)
-		if(in_melee_attack_range):
-			movedir = Vector2(0, 0)
-			state_machine('attack')
-		else:
-			close_distance(t)
+		close_distance(t)
 	else:
-		in_melee_attack_range = false
-		state_machine('idle')
+		player_detected = false
 	
 func get_player_position():
-	var bodies = $Detector.get_overlapping_bodies()
-	for body in bodies:
-		if(body.type == 'player'):
-			return body.position
-
-func get_is_in_melee_range(player_pos):
-	var s = self.get_position()
-	var x_distance = abs(s.x - player_pos.x)
-	var y_distance = abs(s.y - player_pos.y)
-	if(x_distance < 100 and y_distance < 0):
-		return true
-	else:
-		return false
+	var players = get_tree().get_nodes_in_group('players')
+	var player_position = players[0].get_position()
+	return player_position
 
 func close_distance(player_pos):
-	var s = self.get_position()
+	var s = sprite.get_position()
 	if(player_pos.x > s.x):
 		movedir.x = 1
 	else:
@@ -69,15 +58,27 @@ func close_distance(player_pos):
 	anim_switch('walk')
 	
 func _on_Detector_body_entered(body):
-	if(body.type == 'player'):
+	if(body.is_in_group('players')):
 		player_detected = true
-		state_machine('seek')
 
 
 func _on_Detector_body_exited(_body):
-	var bodies = $Detector.get_overlapping_bodies()
+	var bodies = detector.get_overlapping_bodies()
 	for b in bodies:
-		if(b.type == 'player'):
+		if(b.is_in_group('players')):
 			return
 	player_detected = false
-	movedir = Vector2(0, 0)
+
+
+func _on_InRangeCollider_body_entered(body):
+	if(body.is_in_group('players')):
+		in_melee_attack_range = true
+
+
+func _on_InRangeCollider_body_exited(body):
+	var bodies = in_range_collider.get_overlapping_bodies()
+	for b in bodies:
+		if(b.is_in_group('players')):
+			return
+	in_melee_attack_range = false
+	state_machine('seek')
