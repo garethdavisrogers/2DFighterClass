@@ -377,7 +377,7 @@ max_combo_index = 2
 [node name="Sprite" parent="." index="1"]
 texture = ExtResource( 2 )
 hframes = 17
-frame = 14
+frame = 13
 
 [node name="HitCol" parent="Sprite" index="1" groups=[
 "enemies",

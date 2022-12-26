@@ -39,6 +39,8 @@ func _physics_process(delta):
 					state_idle()
 				'stagger':
 					state_stagger()
+				'defend':
+					state_defend()
 		movement_loop()
 		spritedir_loop()
 	else:

@@ -5,6 +5,7 @@ func _ready():
 	
 func _physics_process(delta):
 	if(health > 0):
+		movement_loop()
 		increment_timers(delta)
 		if(timers['stun_timer'] < 0):
 			knockdir = null
@@ -21,10 +22,11 @@ func _physics_process(delta):
 					state_idle()
 				'stagger':
 					state_stagger()
+				'defend':
+					state_defend()
 					
 			controls_loop()
 			spritedir_loop()
-		movement_loop()
 	else:
 		anim_switch('die')
 		
@@ -59,6 +61,7 @@ func controls_loop():
 				attack_input_pressed()
 		elif(Input.is_action_pressed('defend')):
 			anim_switch('block')
+			state_machine('defend')
 			
 		elif(Input.is_action_just_released('defend')):
 			state_machine('idle')

@@ -50,8 +50,9 @@ func _ready():
 ##controls displacement
 func movement_loop():
 	var motion
+	var knockback = 500
 	if(knockdir != null):
-		motion = knockdir * 300
+		motion = knockdir.normalized() * knockback
 	elif(movedir == Vector2(0, 0) and (speed > 0)):
 		motion = Vector2((lastdirection * speed), 0)
 	else:
@@ -67,6 +68,7 @@ func spritedir_loop():
 		sprite.scale.x = sprite.scale.y * -1
 
 func state_idle():
+	knockdir = null
 	if(movedir != Vector2(0,0)):
 		if(speed == 0):
 			speed += 1
@@ -88,6 +90,10 @@ func state_attack():
 		current_attack_index = 1
 		state_machine('idle')
 
+func state_defend():
+	anim_switch('block')
+	speed = decelerate(speed)
+	
 func blast():
 	var type = ''
 	if(is_in_group('players')):
@@ -128,7 +134,6 @@ func state_stagger():
 	
 func damage_loop():
 	health -= 1
-	timers['stun_timer'] = 5
 
 func attack_input_pressed():
 	current_attack_index += 1
@@ -183,7 +188,9 @@ func _on_HitBox_area_entered(area):
 			if(area.is_in_group(group) and group != 'physics_process'):
 				return
 		knockdir = get_knockdir(area)
-		damage_loop()
 		timers['stun_timer'] = 0.3
-		anim_switch('stagger')
-		state_machine('stagger')
+		if(state != 'defend'):
+			damage_loop()
+			anim_switch('stagger')
+			state_machine('stagger')
+			

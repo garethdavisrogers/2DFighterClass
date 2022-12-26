@@ -92,7 +92,7 @@ tracks/2/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ true ]
+"values": [ false ]
 }
 
 [sub_resource type="Animation" id=17]
@@ -824,7 +824,7 @@ position = Vector2( -60, 0 )
 
 [node name="Sprite" parent="." index="1"]
 position = Vector2( -55, 0 )
-frame = 16
+frame = 1
 
 [node name="blast_spawn" parent="Sprite" index="0"]
 position = Vector2( 40, -10 )
@@ -845,7 +845,6 @@ position = Vector2( 32, -8 )
 [node name="HitBoxCol" parent="Sprite/HitBox" index="0" groups=[
 "players",
 ]]
-disabled = true
 
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 rotation = 1.5708
