@@ -774,11 +774,23 @@ frame = 10
 [node name="blast_spawn" parent="Sprite" index="0"]
 position = Vector2( 40, -10 )
 
+[node name="HitCol" parent="Sprite" index="1" groups=[
+"players",
+]]
+
 [node name="HitCollider" parent="Sprite/HitCol" index="0" groups=[
-"attacks",
+"players",
 ]]
 position = Vector2( 32, -8 )
 disabled = false
+
+[node name="HitBox" parent="Sprite" index="2" groups=[
+"players",
+]]
+
+[node name="HitBoxCol" parent="Sprite/HitBox" index="0" groups=[
+"players",
+]]
 
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 rotation = 1.5708

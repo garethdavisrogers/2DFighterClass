@@ -6,15 +6,11 @@ onready var anim = $anim
 onready var blast_spawn = $Sprite/blast_spawn
 onready var hitcol = $Sprite/HitCol
 onready var hitbox = $Sprite/HitBox
-onready var groups = get_groups()
 
 ##respective fighter attributes
 export(int) var max_speed = 200
 export(int) var health = 10
 export(int) var max_combo_index = 1
-
-##load attack instances
-var BLAST = load('res://blast.tscn')
 
 ##universal fighter attributes
 const time_till_next_input = 0.5
@@ -43,6 +39,7 @@ var handicap = {
 ##METHODS
 func _ready():
 	##helps detect hits
+	var groups = get_groups()
 	for group in groups:
 		hitcol.add_to_group(group)
 		hitbox.add_to_group(group)
@@ -91,13 +88,18 @@ func state_attack():
 		state_machine('idle')
 
 func blast():
-	var blast = BLAST.instance(1)
+	var type = ''
+	if(is_in_group('players')):
+		type = '_player'
+	else:
+		type = '_enemy'
+	var load_string = str('res://blast',type,'.tscn')
+	var blast = load(load_string).instance()
+	blast.blastdir = lastdirection
 	var level = get_owner()
 	level.add_child(blast)
-	blast.add_to_group('player')
 	var spawn_pos = blast_spawn.get_global_position()
 	blast.set_position(spawn_pos)
-	blast.blastdir = lastdirection
 		
 func state_jump(d):
 	movement_loop()
@@ -175,6 +177,7 @@ func get_knockdir(c):
 
 func _on_HitBox_area_entered(area):
 	if(area.is_in_group('attacks')):
+		var groups = get_groups()
 		for group in groups:
 			if(area.is_in_group(group) and group != 'physics_process'):
 				return

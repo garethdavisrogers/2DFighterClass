@@ -31,16 +31,24 @@ frame = 8
 [node name="blast_spawn" type="Position2D" parent="Sprite"]
 position = Vector2( 85, 0 )
 
-[node name="HitCol" type="Area2D" parent="Sprite"]
+[node name="HitCol" type="Area2D" parent="Sprite" groups=[
+"attacks",
+]]
 
-[node name="HitCollider" type="CollisionShape2D" parent="Sprite/HitCol"]
+[node name="HitCollider" type="CollisionShape2D" parent="Sprite/HitCol" groups=[
+"attacks",
+]]
 shape = SubResource( 2 )
 disabled = true
 
-[node name="HitBox" type="Area2D" parent="Sprite"]
+[node name="HitBox" type="Area2D" parent="Sprite" groups=[
+"hitboxes",
+]]
 position = Vector2( 85, 0 )
 
-[node name="HitBoxCol" type="CollisionShape2D" parent="Sprite/HitBox"]
+[node name="HitBoxCol" type="CollisionShape2D" parent="Sprite/HitBox" groups=[
+"hitboxes",
+]]
 position = Vector2( -90, 0 )
 shape = SubResource( 3 )
 

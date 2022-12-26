@@ -314,9 +314,23 @@ texture = ExtResource( 2 )
 hframes = 17
 frame = 5
 
-[node name="HitCollider" parent="Sprite/HitCol" index="0"]
+[node name="HitCol" parent="Sprite" index="1" groups=[
+"enemies",
+]]
+
+[node name="HitCollider" parent="Sprite/HitCol" index="0" groups=[
+"enemies",
+]]
 position = Vector2( 65, -5 )
 disabled = false
+
+[node name="HitBox" parent="Sprite" index="2" groups=[
+"enemies",
+]]
+
+[node name="HitBoxCol" parent="Sprite/HitBox" index="0" groups=[
+"enemies",
+]]
 
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 position = Vector2( 70, 0 )
