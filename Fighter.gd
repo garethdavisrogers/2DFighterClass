@@ -9,11 +9,12 @@ onready var anim = $anim
 
 ##respective fighter attributes
 export(int) var max_speed = 200
-export(int) var health = 10
+export(int) var max_health = 10
 export(int) var max_combo_index = 1
 export(float) var acceleration_constant = 0.1
 
 ##universal fighter attributes
+var health = 10
 const time_till_next_input = 0.5
 const jump_time = 0.5
 var state = 'idle'
@@ -21,7 +22,7 @@ var speed = 0
 var max_jump = 300
 var movedir = Vector2(0, 0)
 var knockdir = null
-var lastdirection = -1
+var lastdirection = movedir
 var gravity = Vector2(0, 0)
 var is_in_combo = false
 var current_attack_index = 1
@@ -47,6 +48,7 @@ func _ready():
 		hitbox.add_to_group(group)
 	hitcol.add_to_group('attacks')
 	hitbox.add_to_group('hitboxes')
+	health = max_health
 	
 ##controls displacement
 func movement_loop():
@@ -57,7 +59,7 @@ func movement_loop():
 	elif(state == 'jump' or state == 'land'):
 		motion = Vector2((movedir.x * min(speed,200)), (movedir.y * 100))
 	elif(movedir == Vector2(0, 0) and (speed > 0)):
-		motion = Vector2((lastdirection * speed), 0)
+		motion = lastdirection * speed
 	else:
 		motion = movedir.normalized() * speed
 # warning-ignore:return_value_discarded
@@ -105,34 +107,40 @@ func blast():
 		type = '_enemy'
 	var load_string = str('res://blast',type,'.tscn')
 	var blast = load(load_string).instance()
-	blast.blastdir = lastdirection
+	blast.blastdir = lastdirection.x
 	var level = get_owner()
 	level.add_child(blast)
 	var spawn_pos = blast_spawn.get_global_position()
 	blast.set_position(spawn_pos)
 		
 func state_jump(d):
-	movement_loop()
 	if(speed > 0):
 		speed -= d
 	if(timers['jump_timer'] > 0):
 		position.y -= 12
 		timers['jump_timer'] -= d
 	else:
-		timers['jump_timer'] = 0.6
+		timers['jump_timer'] = 0.5
 		state_machine('land')
 
 func state_land(d):
 	speed = decelerate(speed)
-	movement_loop()
 	anim_switch('land')
 	if(timers['jump_timer'] > 0):
-		position.y += 12
+		position.y += 14
 		timers['jump_timer'] -= d
 	else:
 		state_machine('idle')
 
+func state_takeoff():
+	speed = decelerate(speed)
+	anim_switch('takeoff')
+	
 func state_fly():
+	if(movedir == Vector2(0, 0)):
+		speed = decelerate(speed)
+	else:
+		speed = accelerate(speed)
 	movement_loop()
 
 func state_stagger():
@@ -183,13 +191,17 @@ func increment_timers(d):
 	
 ##change speed functions
 func accelerate(s):
+	if(state == 'fly'):
+		return lerp(s, max_speed, 0.3)
 	if(s < max_speed):
 		return lerp(s, max_speed, acceleration_constant)
 	return max_speed
 
 func decelerate(s):
-	if(s > 0):
+	if(state == 'fly'):
 		return lerp(s, 0, 0.1)
+	if(s > 0):
+		return lerp(s, 0, 0.2)
 	return 0
 	
 func get_knockdir(c):
@@ -197,14 +209,17 @@ func get_knockdir(c):
 	return c.global_position.direction_to(pos)
 
 func _on_HitBox_area_entered(area):
-	if(area.is_in_group('attacks')):
+	if(area.is_in_group('power_ups') and self.is_in_group('players')):
+		if(area.is_in_group('small_power_ups')):	
+			health = min(health + 25, max_health)
+	elif(area.is_in_group('attacks')):
 		var groups = get_groups()
 		for group in groups:
 			if(area.is_in_group(group) and group != 'physics_process'):
 				return
 		knockdir = get_knockdir(area)
 		timers['stun_timer'] = 0.3
-		if(state == 'fly' or state == 'jump' or state == 'land'):
+		if(state == 'fly' or state == 'jump' or state == 'land' or state == 'takeoff'):
 			damage_loop()
 			state_machine('crash')
 		elif(state != 'defend'):

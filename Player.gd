@@ -1,7 +1,7 @@
 extends "res://Fighter.gd"
 
 func _ready():
-	lastdirection = 1
+	lastdirection = movedir
 	
 func _physics_process(delta):
 	clamp_movement()
@@ -17,6 +17,8 @@ func _physics_process(delta):
 					state_jump(delta)
 				'land':
 					state_land(delta)
+				'takeoff':
+					state_takeoff()
 				'fly':
 					state_fly()
 				'idle':
@@ -43,8 +45,8 @@ func controls_loop():
 	
 	movedir.x = -int(left) + int(right)
 	movedir.y = -int(up) + int(down)
-	if(movedir.x != 0):
-		lastdirection = movedir.x
+	if(movedir != Vector2(0, 0)):
+		lastdirection = movedir
 	
 	if(timers['cool_down'] < 0):
 		##actions that can be taken when not stunned
@@ -80,12 +82,13 @@ func controls_loop():
 				timers['jump_timer'] = 0.6
 				state_machine('land')
 			elif(timers['jump_timer'] < 0.4):
-				anim_switch('fly')
-				state_machine('fly')
+				state_machine('takeoff')
 				
 func _on_anim_animation_finished(anim_name):
 	if(anim_name == 'die'):
 		queue_free()
+	elif(anim_name == 'takeoff'):
+		state_machine('fly')
 	elif(anim_name == 'crash'):
 		state_machine('recover')
 	elif(anim_name == 'recover'):
