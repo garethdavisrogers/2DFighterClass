@@ -209,10 +209,7 @@ func get_knockdir(c):
 	return c.global_position.direction_to(pos)
 
 func _on_HitBox_area_entered(area):
-	if(area.is_in_group('power_ups') and self.is_in_group('players')):
-		if(area.is_in_group('small_power_ups')):	
-			health = min(health + 25, max_health)
-	elif(area.is_in_group('attacks')):
+	if(area.is_in_group('attacks')):
 		var groups = get_groups()
 		for group in groups:
 			if(area.is_in_group(group) and group != 'physics_process'):

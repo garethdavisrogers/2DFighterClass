@@ -34,6 +34,8 @@ position = Vector2( 85, 0 )
 [node name="HitCol" type="Area2D" parent="Sprite" groups=[
 "attacks",
 ]]
+collision_layer = 4
+collision_mask = 2
 
 [node name="HitCollider" type="CollisionShape2D" parent="Sprite/HitCol" groups=[
 "attacks",
@@ -45,6 +47,8 @@ disabled = true
 "hitboxes",
 ]]
 position = Vector2( 85, 0 )
+collision_layer = 2
+collision_mask = 4
 
 [node name="HitBoxCol" type="CollisionShape2D" parent="Sprite/HitBox" groups=[
 "hitboxes",
@@ -53,6 +57,8 @@ position = Vector2( -90, 0 )
 shape = SubResource( 3 )
 
 [node name="InRangeCollider" type="Area2D" parent="Sprite"]
+collision_layer = 8
+collision_mask = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/InRangeCollider"]
 [connection signal="area_entered" from="Sprite/HitBox" to="." method="_on_HitBox_area_entered"]

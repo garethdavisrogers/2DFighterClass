@@ -76,3 +76,20 @@ to continue and smaller than the cool down if you want the combo to end
 ##Jumping
 When jumping in a straight line, the player should rise and fall the same distance
 
+##Collision Layers
+1-Body Colliders
+Body Colliders interact with other physics bodies
+2-Hit Boxes
+Hit boxes interact with hit colliders
+3-Hit Colliders
+Hit Colliders interact with hit boxes
+4-InRange Colliders
+InRange Colliders interact with hitboxes and hitcolliders
+5-Interact Colliders
+Interact Colliders interact with interactables
+6-Item Colliders
+Interact with items
+7-Detector Colliders
+Interact with physics bodies
+8-Projectiles
+Interact with hitboxes

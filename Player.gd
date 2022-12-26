@@ -96,3 +96,8 @@ func _on_anim_animation_finished(anim_name):
 			anim_switch('die')
 		state_machine('idle')
 		timers['stun_timer'] = 0.5
+
+
+func _on_PowerUpCol_area_entered(area):
+	if(area.is_in_group('small_power_ups')):
+		health = min(health + 25, max_health)

@@ -398,6 +398,9 @@ position = Vector2( 65, -5 )
 ]]
 disabled = true
 
+[node name="InRangeCollider" parent="Sprite" index="3"]
+collision_mask = 7
+
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 position = Vector2( 70, 0 )
 rotation = 1.5708
