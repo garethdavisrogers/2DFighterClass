@@ -4,6 +4,7 @@ onready var anim = $Detector/anim
 onready var blast_timer = 5
 var groups = []
 var blastdir = 1
+var damage = 1
 var exploding = false
 
 func _ready():

@@ -13,33 +13,36 @@ func _ready():
 	handicap['combo_time'] = 0.5
 	
 func _physics_process(delta):
+	if(health > 0):
 	##timers always tick if greater than 0
-	increment_timers(delta)
-	##enemy can only function if not staggered
-	if(timers['stun_timer'] < 0):
-		knockdir = null
-		if(player_detected and in_melee_attack_range):
-			if(timers['cool_down'] < 0):
-				anim_switch(str('lite_attack', current_attack_index))
-				attack_input_pressed()
-		elif(player_detected):
-			state_machine('seek')
-		else:
-			state_machine('idle')
-			in_melee_attack_range = false
-			player_detected = false
-			
-		match state:
-			'attack':
-				state_attack()
-			'seek':
-				state_seek()
-			'idle':
-				state_idle()
-			'stagger':
-				state_stagger()
-	movement_loop()
-	spritedir_loop()
+		increment_timers(delta)
+		##enemy can only function if not staggered
+		if(timers['stun_timer'] < 0):
+			knockdir = null
+			if(player_detected and in_melee_attack_range):
+				if(timers['cool_down'] < 0):
+					anim_switch(str('lite_attack', current_attack_index))
+					attack_input_pressed()
+			elif(player_detected):
+				state_machine('seek')
+			else:
+				state_machine('idle')
+				in_melee_attack_range = false
+				player_detected = false
+				
+			match state:
+				'attack':
+					state_attack()
+				'seek':
+					state_seek()
+				'idle':
+					state_idle()
+				'stagger':
+					state_stagger()
+		movement_loop()
+		spritedir_loop()
+	else:
+		anim_switch('die')
 	
 func state_seek():
 	current_attack_index = 1
@@ -88,3 +91,8 @@ func _on_InRangeCollider_body_exited(body):
 		if(b != body and b.is_in_group('players')):
 			return
 	in_melee_attack_range = false
+
+
+func _on_anim_animation_finished(anim_name):
+	if(anim_name=='die'):
+		queue_free()

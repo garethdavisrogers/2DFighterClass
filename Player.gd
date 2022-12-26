@@ -4,26 +4,29 @@ func _ready():
 	lastdirection = 1
 	
 func _physics_process(delta):
-	increment_timers(delta)
-	if(timers['stun_timer'] < 0):
-		knockdir = null
-		match state:
-			'attack':
-				state_attack()
-			'jump':
-				state_jump(delta)
-			'land':
-				state_land(delta)
-			'fly':
-				state_fly()
-			'idle':
-				state_idle()
-			'stagger':
-				state_stagger()
-				
-		controls_loop()
-		spritedir_loop()
-	movement_loop()
+	if(health > 0):
+		increment_timers(delta)
+		if(timers['stun_timer'] < 0):
+			knockdir = null
+			match state:
+				'attack':
+					state_attack()
+				'jump':
+					state_jump(delta)
+				'land':
+					state_land(delta)
+				'fly':
+					state_fly()
+				'idle':
+					state_idle()
+				'stagger':
+					state_stagger()
+					
+			controls_loop()
+			spritedir_loop()
+		movement_loop()
+	else:
+		anim_switch('die')
 		
 func controls_loop():
 	var left = Input.is_action_pressed('ui_left')
@@ -70,3 +73,8 @@ func controls_loop():
 				anim_switch('fly')
 				state_machine('fly')
 				
+
+
+func _on_anim_animation_finished(anim_name):
+	if(anim_name == 'die'):
+		queue_free()

@@ -11,6 +11,7 @@ onready var hitbox = $Sprite/HitBox
 export(int) var max_speed = 200
 export(int) var health = 10
 export(int) var max_combo_index = 1
+export(float) var acceleration_constant = 0.1
 
 ##universal fighter attributes
 const time_till_next_input = 0.5
@@ -125,8 +126,8 @@ func state_stagger():
 	if(timers['stun_timer'] < 0):
 		state_machine('idle')
 	
-func damage_loop(damage):
-	health -= damage
+func damage_loop():
+	health -= 1
 	timers['stun_timer'] = 5
 
 func attack_input_pressed():
@@ -163,7 +164,7 @@ func increment_timers(d):
 ##change speed functions
 func accelerate(s):
 	if(s < max_speed):
-		return lerp(s, max_speed, 0.2)
+		return lerp(s, max_speed, acceleration_constant)
 	return max_speed
 
 func decelerate(s):
@@ -182,6 +183,7 @@ func _on_HitBox_area_entered(area):
 			if(area.is_in_group(group) and group != 'physics_process'):
 				return
 		knockdir = get_knockdir(area)
+		damage_loop()
 		timers['stun_timer'] = 0.3
 		anim_switch('stagger')
 		state_machine('stagger')
