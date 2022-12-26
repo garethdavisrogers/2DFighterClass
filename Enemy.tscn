@@ -4,10 +4,10 @@
 [ext_resource path="res://krax_enforcer.png" type="Texture" id=2]
 [ext_resource path="res://Enemy.gd" type="Script" id=3]
 
-[sub_resource type="RectangleShape2D" id=8]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 40, 30 )
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=2]
 resource_name = "die"
 length = 3.0
 step = 0.25
@@ -72,7 +72,7 @@ tracks/4/keys = {
 "values": [ false, true, false, true, false, true, false, true ]
 }
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=3]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
@@ -122,7 +122,7 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=4]
 length = 1.5
 step = 0.2
 tracks/0/type = "value"
@@ -198,7 +198,7 @@ tracks/5/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=5]
 length = 1.5
 step = 0.2
 tracks/0/type = "value"
@@ -274,7 +274,7 @@ tracks/5/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=6]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -325,7 +325,7 @@ tracks/3/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=7]
 loop = true
 step = 0.25
 tracks/0/type = "value"
@@ -365,13 +365,14 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="CircleShape2D" id=7]
+[sub_resource type="CircleShape2D" id=8]
 radius = 700.0
 
 [node name="Enemy" groups=[
 "enemies",
 ] instance=ExtResource( 1 )]
 script = ExtResource( 3 )
+max_speed = 250
 max_combo_index = 2
 
 [node name="Sprite" parent="." index="1"]
@@ -400,21 +401,21 @@ disabled = true
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 position = Vector2( 70, 0 )
 rotation = 1.5708
-shape = SubResource( 8 )
+shape = SubResource( 1 )
 
 [node name="anim" type="AnimationPlayer" parent="." index="2"]
-anims/die = SubResource( 9 )
-anims/idle = SubResource( 2 )
-anims/lite_attack1 = SubResource( 3 )
-anims/lite_attack2 = SubResource( 4 )
-anims/stagger = SubResource( 5 )
-anims/walk = SubResource( 6 )
+anims/die = SubResource( 2 )
+anims/idle = SubResource( 3 )
+anims/lite_attack1 = SubResource( 4 )
+anims/lite_attack2 = SubResource( 5 )
+anims/stagger = SubResource( 6 )
+anims/walk = SubResource( 7 )
 
 [node name="Detector" type="Area2D" parent="." index="3"]
 
 [node name="DetectRadius" type="CollisionShape2D" parent="Detector" index="0"]
 position = Vector2( -85, 0 )
-shape = SubResource( 7 )
+shape = SubResource( 8 )
 [connection signal="body_entered" from="Sprite/InRangeCollider" to="." method="_on_InRangeCollider_body_entered"]
 [connection signal="body_exited" from="Sprite/InRangeCollider" to="." method="_on_InRangeCollider_body_exited"]
 [connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]

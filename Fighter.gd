@@ -2,10 +2,10 @@ extends KinematicBody2D
 
 ##load nodes
 onready var sprite = $Sprite
-onready var anim = $anim
 onready var blast_spawn = $Sprite/blast_spawn
 onready var hitcol = $Sprite/HitCol
 onready var hitbox = $Sprite/HitBox
+onready var anim = $anim
 
 ##respective fighter attributes
 export(int) var max_speed = 200
@@ -18,6 +18,7 @@ const time_till_next_input = 0.5
 const jump_time = 0.5
 var state = 'idle'
 var speed = 0
+var max_jump = 300
 var movedir = Vector2(0, 0)
 var knockdir = null
 var lastdirection = -1
@@ -50,9 +51,11 @@ func _ready():
 ##controls displacement
 func movement_loop():
 	var motion
-	var knockback = 500
+	var knockback = 400
 	if(knockdir != null):
 		motion = knockdir.normalized() * knockback
+	elif(state == 'jump' or state == 'land'):
+		motion = Vector2((movedir.x * min(speed,200)), (movedir.y * 100))
 	elif(movedir == Vector2(0, 0) and (speed > 0)):
 		motion = Vector2((lastdirection * speed), 0)
 	else:
@@ -74,7 +77,7 @@ func state_idle():
 			speed += 1
 		else:
 			speed = accelerate(speed)
-			if(speed > 200):
+			if(speed >= 300):
 				anim_switch('run')
 			else:
 				anim_switch('walk')
@@ -85,16 +88,16 @@ func state_idle():
 ##the overall attack state, returns to idle on timeout
 func state_attack():
 	speed = decelerate(speed)
-	
 	if(timers['combo_timer'] < 0):
 		current_attack_index = 1
 		state_machine('idle')
 
 func state_defend():
-	anim_switch('block')
 	speed = decelerate(speed)
+	anim_switch('block')
 	
 func blast():
+	speed = decelerate(speed)
 	var type = ''
 	if(is_in_group('players')):
 		type = '_player'
@@ -110,17 +113,21 @@ func blast():
 		
 func state_jump(d):
 	movement_loop()
-	if(timers['jump_timer'] < jump_time):
-		position.y -= 2
-		timers['jump_timer'] += d
+	if(speed > 0):
+		speed -= d
+	if(timers['jump_timer'] > 0):
+		position.y -= 12
+		timers['jump_timer'] -= d
 	else:
+		timers['jump_timer'] = 0.6
 		state_machine('land')
 
 func state_land(d):
+	speed = decelerate(speed)
 	movement_loop()
-	anim.play('land')
+	anim_switch('land')
 	if(timers['jump_timer'] > 0):
-		position.y += 2
+		position.y += 12
 		timers['jump_timer'] -= d
 	else:
 		state_machine('idle')
@@ -131,6 +138,14 @@ func state_fly():
 func state_stagger():
 	if(timers['stun_timer'] < 0):
 		state_machine('idle')
+
+func state_crash():
+	position.y += 10
+	anim_switch('crash')
+
+func state_recover():
+	knockdir = null
+	anim_switch('recover')
 	
 func damage_loop():
 	health -= 1
@@ -189,8 +204,14 @@ func _on_HitBox_area_entered(area):
 				return
 		knockdir = get_knockdir(area)
 		timers['stun_timer'] = 0.3
-		if(state != 'defend'):
+		if(state == 'fly' or state == 'jump' or state == 'land'):
+			damage_loop()
+			state_machine('crash')
+		elif(state != 'defend'):
 			damage_loop()
 			anim_switch('stagger')
 			state_machine('stagger')
-			
+
+func clamp_movement():
+	position.x = clamp(position.x, 0, 10000)
+	position.y = clamp(position.y, 0, 1000)

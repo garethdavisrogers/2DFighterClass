@@ -4,6 +4,7 @@ func _ready():
 	lastdirection = 1
 	
 func _physics_process(delta):
+	clamp_movement()
 	if(health > 0):
 		movement_loop()
 		increment_timers(delta)
@@ -22,6 +23,10 @@ func _physics_process(delta):
 					state_idle()
 				'stagger':
 					state_stagger()
+				'crash':
+					state_crash()
+				'recover':
+					state_recover()
 				'defend':
 					state_defend()
 					
@@ -67,17 +72,24 @@ func controls_loop():
 			state_machine('idle')
 			
 		elif(Input.is_action_just_pressed('jump')):
-			if(state != 'jump'):
+			if(state == 'idle'):
+				timers['jump_timer'] = 0.6
 				anim_switch('jump')
 				state_machine('jump')
-			elif(state == 'flight'):
+			elif(state == 'fly'):
+				timers['jump_timer'] = 0.6
 				state_machine('land')
-			else:
+			elif(timers['jump_timer'] < 0.4):
 				anim_switch('fly')
 				state_machine('fly')
 				
-
-
 func _on_anim_animation_finished(anim_name):
 	if(anim_name == 'die'):
 		queue_free()
+	elif(anim_name == 'crash'):
+		state_machine('recover')
+	elif(anim_name == 'recover'):
+		if(health < 0):
+			anim_switch('die')
+		state_machine('idle')
+		timers['stun_timer'] = 0.5

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://Fighter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Player.gd" type="Script" id=2]
@@ -95,10 +95,50 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=17]
+[sub_resource type="Animation" id=18]
+resource_name = "crash"
+length = 0.2
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.05 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 27, 18 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite/HitCol/HitCollider:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite/HitBox/HitBoxCol:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=3]
 resource_name = "die"
 length = 3.0
-loop = true
 step = 0.25
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -149,7 +189,7 @@ tracks/3/keys = {
 "values": [ false, true, false, true, false, true, false, true ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=4]
 step = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -188,7 +228,7 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=5]
 length = 0.8
 step = 0.2
 tracks/0/type = "value"
@@ -240,7 +280,7 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=6]
 length = 0.8
 step = 0.2
 tracks/0/type = "value"
@@ -280,7 +320,7 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=7]
 length = 0.8
 step = 0.2
 tracks/0/type = "value"
@@ -332,7 +372,7 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=8]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
@@ -370,7 +410,7 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=9]
 step = 0.25
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -433,7 +473,7 @@ tracks/4/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=10]
 step = 0.25
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -472,7 +512,7 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=11]
 length = 0.5
 step = 0.25
 tracks/0/type = "value"
@@ -524,7 +564,7 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=12]
 length = 0.5
 step = 0.25
 tracks/0/type = "value"
@@ -576,7 +616,7 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=12]
+[sub_resource type="Animation" id=13]
 length = 0.5
 step = 0.25
 tracks/0/type = "value"
@@ -628,7 +668,7 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=13]
+[sub_resource type="Animation" id=14]
 length = 0.5
 step = 0.25
 tracks/0/type = "value"
@@ -680,7 +720,48 @@ tracks/3/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id=19]
+resource_name = "recover"
+length = 0.5
+step = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 19, 20 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite/HitCol/HitCollider:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite/HitBox/HitBoxCol:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=15]
 step = 0.25
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -719,8 +800,7 @@ tracks/2/keys = {
 "values": [ false ]
 }
 
-[sub_resource type="Animation" id=15]
-resource_name = "stagger"
+[sub_resource type="Animation" id=16]
 length = 0.5
 step = 0.4
 tracks/0/type = "value"
@@ -760,7 +840,7 @@ tracks/2/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=16]
+[sub_resource type="Animation" id=17]
 step = 0.25
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
@@ -815,16 +895,16 @@ tracks/3/keys = {
 "players",
 ] instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-max_speed = 500
+max_speed = 400
 max_combo_index = 4
-acceleration_constant = 0.3
+acceleration_constant = 0.2
 
 [node name="Body Collider" parent="." index="0"]
 position = Vector2( -60, 0 )
 
 [node name="Sprite" parent="." index="1"]
 position = Vector2( -55, 0 )
-frame = 1
+frame = 20
 
 [node name="blast_spawn" parent="Sprite" index="0"]
 position = Vector2( 40, -10 )
@@ -845,6 +925,7 @@ position = Vector2( 32, -8 )
 [node name="HitBoxCol" parent="Sprite/HitBox" index="0" groups=[
 "players",
 ]]
+disabled = true
 
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 rotation = 1.5708
@@ -852,21 +933,23 @@ rotation = 1.5708
 [node name="anim" type="AnimationPlayer" parent="." index="2"]
 anims/blast = SubResource( 1 )
 anims/block = SubResource( 2 )
-anims/die = SubResource( 17 )
-anims/fly = SubResource( 3 )
-anims/heavy_attack1 = SubResource( 4 )
-anims/heavy_attack2 = SubResource( 5 )
-anims/heavy_attack3 = SubResource( 6 )
-anims/idle = SubResource( 7 )
-anims/jump = SubResource( 8 )
-anims/land = SubResource( 9 )
-anims/lite_attack1 = SubResource( 10 )
-anims/lite_attack2 = SubResource( 11 )
-anims/lite_attack3 = SubResource( 12 )
-anims/lite_attack4 = SubResource( 13 )
-anims/run = SubResource( 14 )
-anims/stagger = SubResource( 15 )
-anims/walk = SubResource( 16 )
+anims/crash = SubResource( 18 )
+anims/die = SubResource( 3 )
+anims/fly = SubResource( 4 )
+anims/heavy_attack1 = SubResource( 5 )
+anims/heavy_attack2 = SubResource( 6 )
+anims/heavy_attack3 = SubResource( 7 )
+anims/idle = SubResource( 8 )
+anims/jump = SubResource( 9 )
+anims/land = SubResource( 10 )
+anims/lite_attack1 = SubResource( 11 )
+anims/lite_attack2 = SubResource( 12 )
+anims/lite_attack3 = SubResource( 13 )
+anims/lite_attack4 = SubResource( 14 )
+anims/recover = SubResource( 19 )
+anims/run = SubResource( 15 )
+anims/stagger = SubResource( 16 )
+anims/walk = SubResource( 17 )
 
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
 current = true

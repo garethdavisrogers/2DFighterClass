@@ -13,6 +13,7 @@ func _ready():
 	handicap['combo_time'] = 0.5
 	
 func _physics_process(delta):
+	clamp_movement()
 	if(health > 0):
 	##timers always tick if greater than 0
 		increment_timers(delta)
@@ -57,6 +58,8 @@ func state_seek():
 	
 func get_player_position():
 	var players = get_tree().get_nodes_in_group('players')
+	if(not players):
+		return null
 	var player_position = players[0].global_position
 	return player_position
 

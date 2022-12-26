@@ -73,3 +73,6 @@ has to enter another input
 The combo_timer should always be larger than the cool down if you want the combo
 to continue and smaller than the cool down if you want the combo to end
 
+##Jumping
+When jumping in a straight line, the player should rise and fall the same distance
+
