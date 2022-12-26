@@ -71,7 +71,7 @@ tracks/0/keys = {
 "values": [ 1 ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Sprite/HitBox/CollisionShape2D:disabled")
+tracks/1/path = NodePath("Sprite/HitCol/HitCollider:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -83,7 +83,7 @@ tracks/1/keys = {
 "values": [ true ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Sprite/HitCol/HitCollider:disabled")
+tracks/2/path = NodePath("Sprite/HitBox/HitBoxCol:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -762,19 +762,23 @@ tracks/3/keys = {
 ] instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 max_speed = 500
+max_combo_index = 4
 
 [node name="Body Collider" parent="." index="0"]
 position = Vector2( -60, 0 )
 
 [node name="Sprite" parent="." index="1"]
 position = Vector2( -55, 0 )
-frame = 29
+frame = 10
 
 [node name="blast_spawn" parent="Sprite" index="0"]
 position = Vector2( 40, -10 )
 
-[node name="HitCollider" parent="Sprite/HitCol" index="0"]
+[node name="HitCollider" parent="Sprite/HitCol" index="0" groups=[
+"attacks",
+]]
 position = Vector2( 32, -8 )
+disabled = false
 
 [node name="CollisionShape2D" parent="Sprite/InRangeCollider" index="0"]
 rotation = 1.5708

@@ -1,12 +1,12 @@
 extends "res://Fighter.gd"
 
 func _ready():
-	timers['combo_timer'] = time_till_next_input
 	lastdirection = 1
 	
 func _physics_process(delta):
 	increment_timers(delta)
 	if(timers['stun_timer'] < 0):
+		knockdir = null
 		match state:
 			'attack':
 				state_attack()
@@ -18,10 +18,12 @@ func _physics_process(delta):
 				state_fly()
 			'idle':
 				state_idle()
+			'stagger':
+				state_stagger()
 				
 		controls_loop()
-		movement_loop()
 		spritedir_loop()
+	movement_loop()
 		
 func controls_loop():
 	var left = Input.is_action_pressed('ui_left')

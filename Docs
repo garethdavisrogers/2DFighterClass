@@ -70,4 +70,6 @@ All timers are constantly ticking down if they are more than -1
 
 On attacking the combo_timer should be set to the amount of time the player
 has to enter another input
+The combo_timer should always be larger than the cool down if you want the combo
+to continue and smaller than the cool down if you want the combo to end
 

@@ -6,12 +6,18 @@ var player_detected = false
 onready var detector = $Detector
 onready var in_range_collider = $Sprite/InRangeCollider
 ##player_detected is based on enter/exit $Detector signals
-
+func _ready():
+	##handicaps will slow down the enemy reactions to taste
+	handicap['lite'] = 0.5
+	handicap['heavy'] = 0.8
+	handicap['combo_time'] = 0.5
+	
 func _physics_process(delta):
 	##timers always tick if greater than 0
 	increment_timers(delta)
 	##enemy can only function if not staggered
 	if(timers['stun_timer'] < 0):
+		knockdir = null
 		if(player_detected and in_melee_attack_range):
 			if(timers['cool_down'] < 0):
 				anim_switch(str('lite_attack', current_attack_index))
@@ -30,10 +36,13 @@ func _physics_process(delta):
 				state_seek()
 			'idle':
 				state_idle()
+			'stagger':
+				state_stagger()
 	movement_loop()
 	spritedir_loop()
 	
 func state_seek():
+	current_attack_index = 1
 	var t = get_player_position()
 	##if no player is in detect radius, change to idle state
 	if(t != null):

@@ -4,6 +4,9 @@ extends KinematicBody2D
 onready var sprite = $Sprite
 onready var anim = $anim
 onready var blast_spawn = $Sprite/blast_spawn
+onready var hitcol = $Sprite/HitCol
+onready var hitbox = $Sprite/HitBox
+onready var groups = get_groups()
 
 ##respective fighter attributes
 export(int) var max_speed = 200
@@ -19,6 +22,7 @@ const jump_time = 0.5
 var state = 'idle'
 var speed = 0
 var movedir = Vector2(0, 0)
+var knockdir = null
 var lastdirection = -1
 var gravity = Vector2(0, 0)
 var is_in_combo = false
@@ -30,12 +34,27 @@ var timers = {
 	'stun_timer': -1, 
 	'combo_timer': -1
 	}
+##cooldown handicap
+var handicap = {
+	'lite': 0,
+	'heavy': 0,
+	'combo_time': 0
+}
 ##METHODS
-
+func _ready():
+	##helps detect hits
+	for group in groups:
+		hitcol.add_to_group(group)
+		hitbox.add_to_group(group)
+	hitcol.add_to_group('attacks')
+	hitbox.add_to_group('hitboxes')
+	
 ##controls displacement
 func movement_loop():
 	var motion
-	if(movedir == Vector2(0, 0) and (speed > 0)):
+	if(knockdir != null):
+		motion = knockdir * 300
+	elif(movedir == Vector2(0, 0) and (speed > 0)):
 		motion = Vector2((lastdirection * speed), 0)
 	else:
 		motion = movedir.normalized() * speed
@@ -44,8 +63,10 @@ func movement_loop():
 
 ##matches the sprite fliph
 func spritedir_loop():
-	if(movedir.x != 0):
-		sprite.scale.x = sprite.scale.y * movedir.x
+	if(movedir.x > 0):
+		sprite.scale.x = sprite.scale.y * 1
+	elif(movedir.x < 0):
+		sprite.scale.x = sprite.scale.y * -1
 
 func state_idle():
 	if(movedir != Vector2(0,0)):
@@ -66,7 +87,7 @@ func state_attack():
 	speed = decelerate(speed)
 	
 	if(timers['combo_timer'] < 0):
-		timers['combo_timer'] = 0.5
+		current_attack_index = 1
 		state_machine('idle')
 
 func blast():
@@ -98,22 +119,26 @@ func state_land(d):
 func state_fly():
 	movement_loop()
 
+func state_stagger():
+	if(timers['stun_timer'] < 0):
+		state_machine('idle')
+	
 func damage_loop(damage):
 	health -= damage
 	timers['stun_timer'] = 5
 
 func attack_input_pressed():
-	current_attack_index = min(current_attack_index + 1, max_combo_index)
+	current_attack_index += 1
+	current_attack_index = min(current_attack_index, max_combo_index)
 	state_machine('attack')
 	reset_combo_timer()
 
 func reset_combo_timer():
-	timers['combo_timer'] = 0.7
+	timers['combo_timer'] = 0.5 + handicap['combo_time']
 	if(current_attack_index <= max_combo_index or anim.current_animation != 'heavy_attack3'):
-		timers['cool_down'] = 1
-		
+		timers['cool_down'] = 0.3 + handicap['lite']
 	else:
-		timers['cool_down'] = 0.4
+		timers['cool_down'] = 0.7 + handicap['heavy']
 	
 ##HELPER FUNCTIONS
 
@@ -136,10 +161,24 @@ func increment_timers(d):
 ##change speed functions
 func accelerate(s):
 	if(s < max_speed):
-		return lerp(s, max_speed, 0.1)
+		return lerp(s, max_speed, 0.2)
 	return max_speed
 
 func decelerate(s):
 	if(s > 0):
-		return lerp(s, 0, 0.2)
+		return lerp(s, 0, 0.1)
 	return 0
+	
+func get_knockdir(c):
+	var pos = self.global_position
+	return c.global_position.direction_to(pos)
+
+func _on_HitBox_area_entered(area):
+	if(area.is_in_group('attacks')):
+		for group in groups:
+			if(area.is_in_group(group) and group != 'physics_process'):
+				return
+		knockdir = get_knockdir(area)
+		timers['stun_timer'] = 0.3
+		anim_switch('stagger')
+		state_machine('stagger')
