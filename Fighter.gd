@@ -53,8 +53,6 @@ func movement_loop():
 	var knockback = 400
 	if(knockdir != null):
 		motion = knockdir.normalized() * knockback
-	elif(state == 'jump' or state == 'land'):
-		motion = Vector2((movedir.x * min(speed,200)), (movedir.y * 100))
 	elif(movedir == Vector2(0, 0) and (speed > 0)):
 		motion = lastdirection * speed
 	else:
