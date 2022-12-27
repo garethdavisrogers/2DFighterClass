@@ -9,6 +9,7 @@ radius = 20.0
 [node name="PowerUp" groups=[
 "small_power_ups",
 ] instance=ExtResource( 1 )]
+z_index = 1
 
 [node name="Sprite" parent="." index="0"]
 texture = ExtResource( 2 )

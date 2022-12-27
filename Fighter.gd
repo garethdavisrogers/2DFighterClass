@@ -6,6 +6,7 @@ onready var blast_spawn = $Sprite/blast_spawn
 onready var hitcol = $Sprite/HitCol
 onready var hitbox = $Sprite/HitBox
 onready var anim = $anim
+onready var shadow = $Shadow
 
 ##respective fighter attributes
 export(int) var max_speed = 200
@@ -15,8 +16,9 @@ export(float) var acceleration_constant = 0.1
 
 ##universal fighter attributes
 var health = 10
+var default_shadow_diff = 45
 const time_till_next_input = 0.5
-const jump_time = 0.5
+const jump_constant = 10
 var state = 'idle'
 var speed = 0
 var max_jump = 300
@@ -41,13 +43,8 @@ var handicap = {
 }
 ##METHODS
 func _ready():
-	##helps detect hits
-	var groups = get_groups()
-	for group in groups:
-		hitcol.add_to_group(group)
-		hitbox.add_to_group(group)
-	hitcol.add_to_group('attacks')
-	hitbox.add_to_group('hitboxes')
+	##distance between sprite and shadow for jumping etc
+	default_shadow_diff = get_shadow_diff()
 	health = max_health
 	
 ##controls displacement
@@ -114,21 +111,16 @@ func blast():
 	blast.set_position(spawn_pos)
 		
 func state_jump(d):
-	if(speed > 0):
-		speed -= d
 	if(timers['jump_timer'] > 0):
-		position.y -= 12
+		sprite.position.y -= jump_constant
 		timers['jump_timer'] -= d
 	else:
-		timers['jump_timer'] = 0.5
+		anim_switch('land')
 		state_machine('land')
 
-func state_land(d):
-	speed = decelerate(speed)
-	anim_switch('land')
-	if(timers['jump_timer'] > 0):
-		position.y += 14
-		timers['jump_timer'] -= d
+func state_land():
+	if(get_shadow_diff() > default_shadow_diff):
+		sprite.position.y += 10
 	else:
 		state_machine('idle')
 
@@ -148,8 +140,11 @@ func state_stagger():
 		state_machine('idle')
 
 func state_crash():
-	position.y += 10
 	anim_switch('crash')
+	if(get_shadow_diff() > default_shadow_diff):
+		sprite.position.y += 12
+	else:
+		state_machine('recover')
 
 func state_recover():
 	knockdir = null
@@ -227,3 +222,6 @@ func _on_HitBox_area_entered(area):
 func clamp_movement():
 	position.x = clamp(position.x, 0, 10000)
 	position.y = clamp(position.y, 0, 1000)
+
+func get_shadow_diff():
+	return abs(sprite.position.y - shadow.position.y)

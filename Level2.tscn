@@ -3,7 +3,9 @@
 [ext_resource path="res://cheyenne_level.png" type="Texture" id=1]
 [ext_resource path="res://Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Health25.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Enemy.tscn" type="PackedScene" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 500, 100 )
 
 [node name="Level2" type="Node2D"]
 
@@ -19,8 +21,8 @@ position = Vector2( 151.196, 193.39 )
 [node name="PowerUp" parent="Sprite/YSort" instance=ExtResource( 3 )]
 position = Vector2( 492.266, 237.343 )
 
-[node name="Enemy" parent="Sprite/YSort" instance=ExtResource( 4 )]
-position = Vector2( 712.028, 434.249 )
+[node name="StaticBody2D" type="StaticBody2D" parent="Sprite/YSort"]
 
-[node name="Enemy2" parent="Sprite/YSort" instance=ExtResource( 4 )]
-position = Vector2( 1005.63, 261.956 )
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/YSort/StaticBody2D"]
+position = Vector2( 500, 0 )
+shape = SubResource( 1 )

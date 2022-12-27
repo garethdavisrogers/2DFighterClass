@@ -16,7 +16,7 @@ func _physics_process(delta):
 				'jump':
 					state_jump(delta)
 				'land':
-					state_land(delta)
+					state_land()
 				'takeoff':
 					state_takeoff()
 				'fly':
@@ -89,8 +89,6 @@ func _on_anim_animation_finished(anim_name):
 		queue_free()
 	elif(anim_name == 'takeoff'):
 		state_machine('fly')
-	elif(anim_name == 'crash'):
-		state_machine('recover')
 	elif(anim_name == 'recover'):
 		if(health < 0):
 			anim_switch('die')
